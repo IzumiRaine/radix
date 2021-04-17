@@ -1,7 +1,7 @@
 pub fn radix_sort_u32(input: &mut [u32])
 {
     let mut output = vec![0u32; input.len()];
-    let mut counters = [0u32; 256];  // radix 8
+    let mut counters = [0u32; 256];  // radix 256
     radix_sort_u32_rec(input, &mut output, &mut counters, 0)
 }
 
@@ -15,8 +15,10 @@ fn radix_sort_u32_rec(input: &mut [u32], output: &mut [u32], counters: &mut [u32
         return;
     }
 
+    let shift = 8 * round;
+
     let get_byte = |x: u32| {
-        (x >> round) & 0xFF
+        (x >> shift) & 0xFF
     };
 
     // Do counting sort on the round-th byte
