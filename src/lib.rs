@@ -59,4 +59,47 @@ mod tests {
         radix_sort_u32(&mut data);
         assert_eq!(data, [3, 5, 7, 8]);
     }
+
+    #[test]
+    fn regression1() {
+        let mut data = [1, 22695478, 2156045615];
+        radix_sort_u32(&mut data);
+        assert_eq!(data, [1, 22695478, 2156045615]);
+    }
+
+    #[test]
+    fn large() {
+        const N: usize = 1_000_000;
+        let data = {
+            // Linear Congruential Generator
+            let a: u32 = 22695477;  // multiplier
+            let c: u32 = 1;         // increment
+            let mut x: u32 = 0;
+            let mut next = || {
+                x = x.wrapping_mul(a).wrapping_add(c);
+                x
+            };
+            // Create data
+            let mut data = vec![0; N];
+            for y in data.iter_mut() {
+                *y = next();
+            }
+            data
+        };
+
+        let sorted1 = {
+            let mut data1 = data.clone();
+            data1.sort();
+            data1
+        };
+
+        let sorted2 = {
+            let mut data2 = data.clone();
+            radix_sort_u32(&mut data2);
+            data2
+        };
+
+        assert_eq!(sorted1, sorted2);
+    }
+
 }
